@@ -11,7 +11,6 @@ export default class CountriesController {
 
   }
 
-
   public async store ({ response , request }: HttpContextContract) {
     const countriesSchema = schema.create({
       name: schema.string({} , [

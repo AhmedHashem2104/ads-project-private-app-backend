@@ -18,7 +18,7 @@ export default class UsersController {
                 rules.minLength(8),
                 rules.maxLength(15)
             ]),
-            country_id: schema.number()
+            // country_id: schema.number()
           })
           const messages = {
               'username.required' : `username is required`,
@@ -30,8 +30,8 @@ export default class UsersController {
               'password.requried' : `password is required`,
               'password.minLength' : `password should be between 8 - 15 characters`,
               'password.maxLength' : `password should be between 8 - 15 characters`,
-              'country_id.required' : `country is required`,
-              'country_id.number' : `country should be number`
+            //   'country_id.required' : `country is required`,
+            //   'country_id.number' : `country should be number`
           }
         const validatedData = await request.validate({
             schema: usersSchema,

@@ -28,4 +28,6 @@ Route.group(() => {
 
   Route.resource('/country' , 'CountriesController').middleware({'*' : 'auth'})
 
+  Route.resource('/category' , 'CategoriesController').middleware({'*' : 'auth'})
+
 }).prefix('/api/v1')
