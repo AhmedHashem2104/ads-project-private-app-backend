@@ -13,7 +13,7 @@ export default class AdsController {
     return response.status(200).json(query)
   }
 
-  public async store ({ response , request }: HttpContextContract) {
+  public async store ({ response , request , auth }: HttpContextContract) {
     const adsSchema = schema.create({
       name: schema.string({} , [
           rules.unique({ column : 'name' , table : 'ads' }),
@@ -31,7 +31,8 @@ export default class AdsController {
         rules.url(),
         rules.unique({ column: 'youtube' , table : 'ads' })
       ]),
-      category_id: schema.number()
+      category_id: schema.number(),
+      country_id: schema.number()
     })
     const messages = {
         'name.required' : `name is required`,
@@ -46,12 +47,15 @@ export default class AdsController {
         'youtube.unique' : `youtube is already exists`,
         'youtube.url' : `youtube should be valid url`,
         'category_id.required' : `category should be selected`,
-        'category_id.number' : `category should be a number`
+        'category_id.number' : `category should be a number`,
+        'country_id.required' : `country should be selected`,
+        'country_id.number' : `country should be a number`
     }
     const validatedData = await request.validate({
       schema: adsSchema,
       messages : messages
     })
+    const query = await Ad.create({...validatedData , user_id : auth.user?.id , image : validatedData.image?.fileName , video : validatedData.video?.fileName})
     await validatedData.image.move(Application.publicPath('uploads') , {
       name: `${new Date().getTime()}.${validatedData.image.extname}`
     })
@@ -65,7 +69,6 @@ export default class AdsController {
           imageminWebp({quality: 30})
       ]
     })
-    const query = await Ad.create({...validatedData , image : validatedData.image?.fileName , video : validatedData.video?.fileName})
     return response.status(200).json(query)
   }
 
@@ -95,7 +98,8 @@ export default class AdsController {
         rules.url(),
         rules.unique({ column: 'youtube' , table : 'ads' })
       ]),
-      category_id: schema.number.optional()
+      category_id: schema.number.optional(),
+      country_id: schema.number.optional()
     })
     const messages = {
       'name.string' : `name should be valid string`,
@@ -108,7 +112,8 @@ export default class AdsController {
       'video.file.extname' : `video should be (mp4 , webm)`,
       'youtube.unique' : `youtube is already exists`,
       'youtube.url' : `youtube should be valid url`,
-      'category_id.number' : `category should be a number`
+      'category_id.number' : `category should be a number`,
+      'country_id.number' : `country should be a number`
   }
     const validatedData = await request.validate({
       schema: adsSchema,

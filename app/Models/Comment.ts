@@ -17,6 +17,9 @@ export default class Comment extends BaseModel {
   @column()
   public likes: number
 
+  @column()
+  public ad_id: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

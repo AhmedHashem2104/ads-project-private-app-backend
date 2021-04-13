@@ -32,4 +32,6 @@ Route.group(() => {
 
   Route.resource('/ad' , 'AdsController').middleware({'*' : 'auth'})
 
+  Route.resource('/comment' , 'CommentsController').middleware({'*' : 'auth'})
+
 }).prefix('/api/v1')

@@ -43,6 +43,7 @@ export default class CategoriesController {
       schema: categoriesSchema,
       messages : messages
     })
+    const query = await Category.create({...validatedData , image : validatedData.image.fileName , icon : validatedData.icon.fileName})
     await validatedData.image.move(Application.publicPath('uploads') , {
       name: `${new Date().getTime()}.${validatedData.image.extname}`
     })
@@ -55,7 +56,6 @@ export default class CategoriesController {
           imageminWebp({quality: 30})
       ]
     })
-    const query = await Category.create({...validatedData , image : validatedData.image.fileName , icon : validatedData.icon.fileName})
     return response.status(200).json(query)
   }
 

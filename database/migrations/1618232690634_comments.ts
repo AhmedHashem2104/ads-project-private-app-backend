@@ -9,7 +9,8 @@ export default class Comments extends BaseSchema {
             table.string('message').notNullable()
             table.integer('sender_id').unsigned().references('id').inTable('users').onUpdate('CASCADE').onDelete('CASCADE')
             table.integer('receiver_id').unsigned().references('id').inTable('users').onUpdate('CASCADE').onDelete('CASCADE')
-            table.integer('likes').unsigned().notNullable()
+            table.integer('ad_id').unsigned().references('id').inTable('ads').onUpdate('CASCADE').onDelete('CASCADE')
+            table.integer('likes').unsigned().defaultTo(0)
             table.timestamps(true , true)
         })
     }

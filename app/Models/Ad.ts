@@ -29,6 +29,9 @@ export default class Ad extends BaseModel {
   @column()
   public category_id: number
 
+  @column()
+  public country_id: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
