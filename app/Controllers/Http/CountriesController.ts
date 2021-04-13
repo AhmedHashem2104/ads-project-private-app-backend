@@ -8,7 +8,6 @@ export default class CountriesController {
     if(query.length === 0)
       return response.status(400).json({ message : 'No Data Found' })
     return response.status(200).json(query)
-
   }
 
   public async store ({ response , request }: HttpContextContract) {

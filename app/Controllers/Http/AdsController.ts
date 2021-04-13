@@ -62,7 +62,7 @@ export default class AdsController {
     await imagemin([`public/uploads/${validatedData.image.fileName}`], {
       destination: 'public/uploads',
       plugins: [
-          imageminWebp({quality: 50})
+          imageminWebp({quality: 30})
       ]
     })
     const query = await Ad.create({...validatedData , image : validatedData.image?.fileName , video : validatedData.video?.fileName})

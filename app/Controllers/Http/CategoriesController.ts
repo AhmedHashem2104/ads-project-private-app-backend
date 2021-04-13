@@ -66,7 +66,6 @@ export default class CategoriesController {
         message : 'No Data Found'
       })
     return response.status(200).json(query)
-
   }
 
 
