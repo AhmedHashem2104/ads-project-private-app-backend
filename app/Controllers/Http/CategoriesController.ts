@@ -3,11 +3,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Category from 'App/Models/Category'
 import Application from '@ioc:Adonis/Core/Application'
 import imagemin from 'imagemin'
-import imageminPngquant from 'imagemin-pngquant'
-import imageminMozjpeg from 'imagemin-mozjpeg'
 import imageminWebp from 'imagemin-webp'
-import imageminSvgo from 'imagemin-svgo';
-import {extendDefaultPlugins} from 'svgo';
 
 export default class CategoriesController {
   public async index ({ response }: HttpContextContract) {
@@ -15,7 +11,6 @@ export default class CategoriesController {
     if(query.length === 0)
       return response.status(400).json({ message : 'No Data Found' })
     return response.status(200).json(query)
-
   }
 
   public async store ({ response , request }: HttpContextContract) {
@@ -57,16 +52,7 @@ export default class CategoriesController {
     await imagemin([`public/uploads/${validatedData.image.fileName}` , `public/uploads/${validatedData.icon.fileName}`], {
       destination: 'public/uploads',
       plugins: [
-          imageminWebp({quality: 50}),
-          imageminMozjpeg({ quality: 50 }),
-          imageminPngquant({
-              quality: [0.6, 0.8]
-          }),
-          imageminSvgo({
-            plugins: extendDefaultPlugins([
-              {name: 'removeViewBox', active: false}
-            ])
-          })
+          imageminWebp({quality: 30})
       ]
     })
     const query = await Category.create({...validatedData , image : validatedData.image.fileName , icon : validatedData.icon.fileName})
@@ -93,18 +79,18 @@ export default class CategoriesController {
         extnames: ['jpg', 'png', 'jpeg']
       }),
       icon: schema.file.optional({
-        size: '1mb',
+        size: '2mb',
         extnames: ['jpg', 'png', 'jpeg']
       })
     })
     const messages = {
-        'name.required' : `name is required`,
-        'description.required' : `description is required`,
-        'image.file' : `image is required`,
+        'name.string' : `name should be valid string`,
+        'description.string' : `description should be valid string`,
+        'image.file' : `image should be valid file`,
         'image.file.size' : `image should be under 2mb`,
         'image.file.extname' : `image should be (jpg , png , jpeg)`,
-        'icon.file' : `icon is required`,
-        'icon.file.size' : `icon should be under 1mb`,
+        'icon.file' : `icon should be valid file`,
+        'icon.file.size' : `icon should be under 2mb`,
         'icon.file.extname' : `icon should be (jpg , png , jpeg)`
     }
     const validatedData = await request.validate({
@@ -118,16 +104,7 @@ export default class CategoriesController {
     await imagemin([`public/uploads/${validatedData.image.fileName}`], {
       destination: 'public/uploads',
       plugins: [
-          imageminWebp({quality: 50}),
-          imageminMozjpeg({ quality: 50 }),
-          imageminPngquant({
-              quality: [0.6, 0.8]
-          }),
-          imageminSvgo({
-            plugins: extendDefaultPlugins([
-              {name: 'removeViewBox', active: false}
-            ])
-          })
+          imageminWebp({quality: 30})
       ]
     })
     }
@@ -138,16 +115,7 @@ export default class CategoriesController {
     await imagemin([`public/uploads/${validatedData.icon.fileName}`], {
       destination: 'public/uploads',
       plugins: [
-          imageminWebp({quality: 50}),
-          imageminMozjpeg({ quality: 50 }),
-          imageminPngquant({
-              quality: [0.6, 0.8]
-          }),
-          imageminSvgo({
-            plugins: extendDefaultPlugins([
-              {name: 'removeViewBox', active: false}
-            ])
-          })
+          imageminWebp({quality: 30})
       ]
     })
     }

@@ -30,4 +30,6 @@ Route.group(() => {
 
   Route.resource('/category' , 'CategoriesController').middleware({'*' : 'auth'})
 
+  Route.resource('/ad' , 'AdsController').middleware({'*' : 'auth'})
+
 }).prefix('/api/v1')
