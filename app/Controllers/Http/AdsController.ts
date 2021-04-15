@@ -13,7 +13,29 @@ export default class AdsController {
     return response.status(200).json(query)
   }
 
+  public async latestAds ({ response , params }: HttpContextContract) {
+    const query = await Ad.query().limit(params.number).orderBy('id' , 'desc')
+    if(query.length === 0)
+      return response.status(400).json({ message : 'No Data Found' })
+    return response.status(200).json(query)
+  }
+
   public async store ({ response , request , auth }: HttpContextContract) {
+    let youtubeLink = request.input('youtube')
+    if(youtubeLink){
+      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      var match = youtubeLink?.match(regExp);
+      if(match&&match[7].length==11){
+        youtubeLink = match[7]
+        console.log('dwef', youtubeLink)
+        request.all().youtube = youtubeLink
+      }
+      else{
+        return response.status(400).json({
+          message : `please enter valid youtube url`
+        })
+      }
+    }
     const adsSchema = schema.create({
       name: schema.string({} , [
           rules.unique({ column : 'name' , table : 'ads' }),
@@ -25,10 +47,10 @@ export default class AdsController {
       }),
       video: schema.file.optional({
         size: '50mb',
-        extnames: ['mp4' , 'webm']
+        extnames: ['mp4' , 'webm' , 'mkv']
       }),
       youtube: schema.string.optional({} , [
-        rules.url(),
+        // rules.url(),
         rules.unique({ column: 'youtube' , table : 'ads' })
       ]),
       category_id: schema.number(),
@@ -43,9 +65,9 @@ export default class AdsController {
         'image.file.extname' : `image should be (jpg , png , jpeg , webp)`,
         'video.file' : `icon is required`,
         'video.file.size' : `icon should be under 50mb`,
-        'video.file.extname' : `icon should be (mp4 , webm)`,
+        'video.file.extname' : `icon should be (mp4 , webm , mkv)`,
         'youtube.unique' : `youtube is already exists`,
-        'youtube.url' : `youtube should be valid url`,
+        // 'youtube.url' : `youtube should be valid url`,
         'category_id.required' : `category should be selected`,
         'category_id.number' : `category should be a number`,
         'country_id.required' : `country should be selected`,
@@ -83,6 +105,20 @@ export default class AdsController {
   }
 
   public async update ({ response , request , params }: HttpContextContract) {
+    let youtubeLink = request.input('youtube')
+    if(youtubeLink){
+      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      var match = youtubeLink?.match(regExp);
+      if(match&&match[7].length==11){
+        youtubeLink = match[7]
+        request.all().youtube = youtubeLink
+      }
+      else{
+        return response.status(400).json({
+          message : `please enter valid youtube url`
+        })
+      }
+    }
     const adsSchema = schema.create({
       name: schema.string.optional(),
       description: schema.string.optional(),
@@ -95,8 +131,8 @@ export default class AdsController {
         extnames: ['mp4' , 'webm']
       }),
       youtube: schema.string.optional({} , [
-        rules.url(),
-        rules.unique({ column: 'youtube' , table : 'ads' })
+        // rules.url(),
+        // rules.unique({ column: 'youtube' , table : 'ads' })
       ]),
       category_id: schema.number.optional(),
       country_id: schema.number.optional()
@@ -110,8 +146,9 @@ export default class AdsController {
       'video.file' : `video should be (mp4 , webm)`,
       'video.file.size' : `video should be under 50mb`,
       'video.file.extname' : `video should be (mp4 , webm)`,
-      'youtube.unique' : `youtube is already exists`,
-      'youtube.url' : `youtube should be valid url`,
+      'youtube.string' : `youtube should be valid youtube url`,
+      // 'youtube.unique' : `youtube is already exists`,
+      // 'youtube.url' : `youtube should be valid url`,
       'category_id.number' : `category should be a number`,
       'country_id.number' : `country should be a number`
   }
@@ -136,7 +173,7 @@ export default class AdsController {
     })
     }
     try{
-      await Ad.query().where('id' , params.id).update({...validatedData , image : validatedData.image?.fileName , icon : validatedData.video?.fileName})
+      await Ad.query().where('id' , params.id).update({...validatedData , image : validatedData.image?.fileName , video : validatedData.video?.fileName})
       return response.status(200).json({
         message : 'Ad updated successfully'
       })

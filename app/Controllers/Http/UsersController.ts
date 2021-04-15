@@ -59,7 +59,7 @@ export default class UsersController {
           const messages = {
               'email.required' : `email is required`,
               'email.email' : `email should be valid email`,
-              'password.requried' : `password is required`,
+              'password.required' : `password is required`,
               'password.minLength' : `password should be between 8 - 15 characters`,
               'password.maxLength' : `password should be between 8 - 15 characters`
           }

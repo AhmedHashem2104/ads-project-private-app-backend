@@ -17,7 +17,7 @@
 | import './customer'
 |
 */
-
+import Application from '@ioc:Adonis/Core/Application'
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
@@ -32,6 +32,12 @@ Route.group(() => {
 
   Route.resource('/ad' , 'AdsController').middleware({'*' : 'auth'})
 
+  Route.get('/latestAds/:number' , 'AdsController.latestAds').middleware('auth')
+
   Route.resource('/comment' , 'CommentsController').middleware({'*' : 'auth'})
 
 }).prefix('/api/v1')
+
+Route.get('uploads/:filename', async ({ response, params }) => {
+  response.download(Application.makePath('/public/uploads', params.filename))
+})
