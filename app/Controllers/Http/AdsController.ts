@@ -20,6 +20,13 @@ export default class AdsController {
     return response.status(200).json(query)
   }
 
+  public async mostLiked ({ response , params }: HttpContextContract) {
+    const query = await Ad.query().limit(params.number).orderBy('likes' , 'desc').orderBy('id' , 'desc')
+    if(query.length === 0)
+      return response.status(400).json({ message : 'No Data Found' })
+    return response.status(200).json(query)
+  }
+
   public async store ({ response , request , auth }: HttpContextContract) {
     let youtubeLink = request.input('youtube')
     if(youtubeLink){

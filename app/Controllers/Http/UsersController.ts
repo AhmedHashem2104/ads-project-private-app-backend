@@ -72,5 +72,27 @@ export default class UsersController {
             user : auth.user,
             token : token
         })
-      }  
+      }
+
+      public async index ({ response }: HttpContextContract) {
+        const query = await User.all()
+        if(query.length === 0)
+          return response.status(400).json({ message : 'No Data Found' })
+        return response.status(200).json(query)
+      }
+
+      public async destroy ({ response , params }: HttpContextContract) {
+        try{
+          const query = await User.findOrFail(params.id)
+          await query.delete()
+          return response.status(200).json({
+            message : 'User deleted successfully'
+          })
+        }
+        catch(err){
+          return response.status(400).json({
+            message : 'No thing to be deleted'
+          })
+        }
+      }
 }

@@ -34,7 +34,11 @@ Route.group(() => {
 
   Route.get('/latestAds/:number' , 'AdsController.latestAds').middleware('auth')
 
+  Route.get('/mostLiked/:number' , 'AdsController.mostLiked').middleware('auth')
+
   Route.resource('/comment' , 'CommentsController').middleware({'*' : 'auth'})
+
+  Route.resource('/user' , 'UsersController').middleware({'*' : 'auth'})
 
 }).prefix('/api/v1')
 
