@@ -14,9 +14,9 @@ export default class UsersController {
                 rules.unique({ column : 'email' , table : 'users' })
             ]),
             password : schema.string({} , [
-                rules.confirmed(),
                 rules.minLength(8),
-                rules.maxLength(15)
+                rules.maxLength(15),
+                rules.confirmed()
             ]),
             // country_id: schema.number()
           })
@@ -27,9 +27,10 @@ export default class UsersController {
               'email.required' : `email is required`,
               'email.email' : `email should be valid email`,
               'email.unique' : `email is already exists`,
-              'password.requried' : `password is required`,
+              'password.required' : `password is required`,
               'password.minLength' : `password should be between 8 - 15 characters`,
               'password.maxLength' : `password should be between 8 - 15 characters`,
+              'password_confirmation.confirmed' : `password does not match`
             //   'country_id.required' : `country is required`,
             //   'country_id.number' : `country should be number`
           }
@@ -79,6 +80,54 @@ export default class UsersController {
         if(query.length === 0)
           return response.status(400).json({ message : 'No Data Found' })
         return response.status(200).json(query)
+      }
+      public async show ({ response , params }: HttpContextContract) {
+        const query = await User.query().where('id' , params.id).first()
+        if(!query)
+          return response.status(400).json({
+            message : 'No Data Found'
+          })
+        return response.status(200).json(query)
+      }
+
+      public async update ({ response , request , params }: HttpContextContract) {
+        const usersSchema = schema.create({
+          username: schema.string.optional({} , [
+            rules.unique({ column : 'username' , table : 'users' })
+        ]),
+        nickname: schema.string.optional(),
+        password : schema.string.optional({} , [
+            rules.minLength(8),
+            rules.maxLength(15),
+            rules.confirmed()
+        ]),
+        })
+        const messages = {
+          'username.string' : `username shoule be valid string`,
+          'username.unique' : `username is already exists`,
+          'nickname.string' : `nickname should be string`,
+          'password.string' : `password should be between 8 - 15 characters`,
+          'password.minLength' : `password should be between 8 - 15 characters`,
+          'password.maxLength' : `password should be between 8 - 15 characters`,
+          'password_confirmation.confirmed' : `password does not match`
+        //   'country_id.required' : `country is required`,
+        //   'country_id.number' : `country should be number`
+      }
+      const validatedData = await request.validate({
+          schema: usersSchema,
+          messages : messages
+        })
+        try{
+          await User.query().where('id' , params.id).update(validatedData)
+          return response.status(200).json({
+            message : 'Country updated successfully'
+          })
+        }
+        catch(err){
+          return response.status(400).json({
+            message : 'No thing to be updated'
+          })
+        }
       }
 
       public async destroy ({ response , params }: HttpContextContract) {

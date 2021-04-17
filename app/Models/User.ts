@@ -26,6 +26,9 @@ export default class User extends BaseModel {
   public country_id: number
 
   @column()
+  public avatar: string
+
+  @column()
   public rememberMeToken?: string
 
   @column.dateTime({ autoCreate: true })
