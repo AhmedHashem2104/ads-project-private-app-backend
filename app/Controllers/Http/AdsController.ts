@@ -34,7 +34,6 @@ export default class AdsController {
       var match = youtubeLink?.match(regExp);
       if(match&&match[7].length==11){
         youtubeLink = match[7]
-        console.log('dwef', youtubeLink)
         request.all().youtube = youtubeLink
       }
       else{
@@ -68,6 +67,7 @@ export default class AdsController {
         'name.unique' : `name is already exists`,
         'description.required' : `description is required`,
         'image.file' : `image is required`,
+        'image.required' : `image is required`,
         'image.file.size' : `image should be under 2mb`,
         'image.file.extname' : `image should be (jpg , png , jpeg , webp)`,
         'video.file' : `icon is required`,
@@ -84,13 +84,12 @@ export default class AdsController {
       schema: adsSchema,
       messages : messages
     })
-    const query = await Ad.create({...validatedData , user_id : auth.user?.id , image : validatedData.image?.fileName , video : validatedData.video?.fileName})
-    await validatedData.image.move(Application.publicPath('uploads') , {
-      name: `${new Date().getTime()}.${validatedData.image.extname}`
-    })
     if(validatedData.video)
     await validatedData.video.move(Application.publicPath('uploads') , {
       name: `${new Date().getTime()}.${validatedData.video.extname}`
+    })
+    await validatedData.image.move(Application.publicPath('uploads') , {
+      name: `${new Date().getTime()}.${validatedData.image.extname}`
     })
     await imagemin([`public/uploads/${validatedData.image.fileName}`], {
       destination: 'public/uploads',
@@ -98,6 +97,7 @@ export default class AdsController {
           imageminWebp({quality: 30})
       ]
     })
+    const query = await Ad.create({...validatedData , user_id : auth.user?.id , image : validatedData.image?.fileName , video : validatedData.video?.fileName})
     return response.status(200).json(query)
   }
 
