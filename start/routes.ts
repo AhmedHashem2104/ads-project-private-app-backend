@@ -32,6 +32,8 @@ Route.group(() => {
 
   Route.resource('/ad' , 'AdsController').middleware({'*' : 'auth'})
 
+  Route.get('/myAds/:page' , 'AdsController.myAds').middleware('auth')
+
   Route.get('/latestAds/:number' , 'AdsController.latestAds').middleware('auth')
 
   Route.get('/mostLiked/:number' , 'AdsController.mostLiked').middleware('auth')

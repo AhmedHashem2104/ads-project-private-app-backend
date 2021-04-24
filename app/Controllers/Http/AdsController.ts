@@ -70,9 +70,9 @@ export default class AdsController {
         'image.required' : `image is required`,
         'image.file.size' : `image should be under 2mb`,
         'image.file.extname' : `image should be (jpg , png , jpeg , webp)`,
-        'video.file' : `icon is required`,
-        'video.file.size' : `icon should be under 50mb`,
-        'video.file.extname' : `icon should be (mp4 , webm , mkv)`,
+        'video.file' : `video is required`,
+        'video.file.size' : `video should be under 50mb`,
+        'video.file.extname' : `video should be (mp4 , webm , mkv)`,
         'youtube.unique' : `youtube is already exists`,
         // 'youtube.url' : `youtube should be valid url`,
         'category_id.required' : `category should be selected`,
@@ -108,7 +108,15 @@ export default class AdsController {
         message : 'No Data Found'
       })
     return response.status(200).json(query)
+  }
 
+  public async myAds ({ response , auth , params }) {
+    const query = await Ad.query().where('user_id' , auth.user.id).paginate(params.page , 6)
+    if(query.length === 0)
+      return response.status(400).json({
+        message : 'No Data Found'
+      })
+    return response.status(200).json(query)
   }
 
   public async update ({ response , request , params }: HttpContextContract) {
